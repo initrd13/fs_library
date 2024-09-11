@@ -1,0 +1,52 @@
+#define LT( n ) n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n
+        static constexpr std::int8_t LogBase2Table256[256] = {
+
+            -1, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3,
+            LT( 4 ), LT( 5 ), LT( 5 ), LT( 6 ), LT( 6 ), LT( 6 ), LT( 6 ),
+            LT( 7 ), LT( 7 ), LT( 7 ), LT( 7 ), LT( 7 ), LT( 7 ), LT( 7 ), LT( 7 ) };
+        /**
+         * @brief Determines the position of the most significant bit set in a 32-bit unsigned integer.
+         *
+         * This function calculates the position of the most significant bit (MSB) that is set in the
+         * provided 32-bit unsigned integer (`val`). The function utilizes a lookup table (`LogBase2Table256`) and
+         * binary search algorithm to determine the bit position efficiently.
+         *
+         * The bit positions are indexed starting from 0 (i.e., the least significant bit is at position 0).
+         *
+         * @param val The 32-bit unsigned integer whose most significant set bit position needs to be found.
+         * @return The position of the most significant bit that is set in `val`. If `val` is 0, the function
+         * will return -1 as there are no bits set.
+         */
+        [[nodiscard]] static std::int8_t getBitPosition( std::uint32_t val );
+
+  std::int8_t Measurement::getBitPosition( const std::uint32_t val )
+    {
+        std::int8_t bitPos = 0;
+        std::uint32_t temp1 = 0;
+
+        if( const std::uint32_t temp2 = val >> 16 )
+        {
+            temp1 = temp2 >> 8;
+            if( temp1 )
+            {
+                bitPos = static_cast<std::int8_t>( 24 + LogBase2Table256[temp1] );
+            }
+            else
+            {
+                bitPos = static_cast<std::int8_t>( 16 + LogBase2Table256[temp2] );
+            }
+        }
+        else
+        {
+            temp1 = val >> 8;
+            if( temp1 )
+            {
+                bitPos = static_cast<std::int8_t>( 8 + LogBase2Table256[temp1] );
+            }
+            else
+            {
+                bitPos = LogBase2Table256[val];
+            }
+        }
+        return bitPos;
+    }
